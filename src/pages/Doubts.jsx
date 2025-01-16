@@ -6,15 +6,20 @@ const Doubts = () => {
 
    const navigate = useNavigate();
    const [doubts, setDoubts] = useState([]);
+   const [page, setPage] = useState(1);
+   const [totalPages, setTotalPages] = useState(1);
 
    useEffect(() => {
       const getData = async () => {
-         const response = await getDoubts();
-         if (response.length > 0)
-            setDoubts(response);
+         const response = await getDoubts(page);
+         console.log(response)
+         if (response?.questions?.length > 0)
+            setDoubts(response.questions);
+         if (response?.totalPages)
+            setTotalPages(response?.totalPages)
       }
       getData();
-   }, [])
+   }, [page])
 
    return (
       <div className='w-[70%] text-center'>
@@ -32,6 +37,27 @@ const Doubts = () => {
                </div>
             ))
          }
+
+         <div className='sticky bottom-0 w-[50%] mx-auto flex justify-between border-2  border-green-700 p-3  rounded-lg'>
+            {
+               page !== totalPages &&
+               <button
+                  className='bg-slate-300 rounded-md mx-auto p-3 text-xl hover:opacity-80'
+                  onClick={() => setPage(page + 1)}
+               >
+                  Next
+               </button>
+            }
+            {
+               page !== 1 &&
+               <button
+                  className='bg-slate-300 rounded-md mx-auto p-3 text-xl hover:opacity-80'
+                  onClick={() => setPage(page - 1)}
+               >
+                  Prev
+               </button>
+            }
+         </div>
 
       </div>
    )

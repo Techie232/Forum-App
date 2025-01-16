@@ -31,15 +31,29 @@ exports.createDoubt = async (req, res) => {
    }
 }
 
-exports.getAllDoubts = async (req, res) => {
+exports.listDoubts = async (req, res) => {
    try {
 
-      const data = await Doubt.find({});
+      let { page, limit } = req.query;
+
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 7;
+
+      const skip = (page - 1) * limit;
+
+      const data = await Doubt.find({})
+         .skip(skip)
+         .limit(limit)
+
+      const total = await Doubt.countDocuments();
 
       return res.status(200).json({
          success: true,
-         message: "All doubts fetched Successfully",
-         data: data,
+         message: `Doubts fetched Successfully`,
+         data: {
+            questions: data,
+            totalPages: Math.ceil(total / limit)
+         }
       })
 
    } catch (error) {

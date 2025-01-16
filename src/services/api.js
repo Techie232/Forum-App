@@ -7,7 +7,7 @@ export const endPoints = {
 
 export const doubtPoints = {
    CREATE_DOUBT_API: BASE_URL + '/doubt/create',
-   GET_ALL_DOUBT_API: BASE_URL + '/doubt/getAll',
+   GET_ALL_DOUBT_API: BASE_URL + '/doubt/listDoubts',
    GET_ONE_DOUBT_API: BASE_URL + '/doubt/getSpecificDoubt',
 }
 
