@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getDoubts } from '../services/operations/doubt';
 
 const Doubts = () => {
@@ -8,15 +8,18 @@ const Doubts = () => {
    const [doubts, setDoubts] = useState([]);
    const [page, setPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
+   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
+      navigate(`/?page=${page}`);
+      setLoading(true);
       const getData = async () => {
          const response = await getDoubts(page);
-         console.log(response)
          if (response?.questions?.length > 0)
             setDoubts(response.questions);
          if (response?.totalPages)
             setTotalPages(response?.totalPages)
+         setLoading(false);
       }
       getData();
    }, [page])
