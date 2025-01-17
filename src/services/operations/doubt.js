@@ -19,10 +19,10 @@ export const createDoubts = async (data, token) => {
    }
 }
 
-export const getDoubts = async (page, limit = 7) => {
+export const getDoubts = async (page, limit = 7, search = "") => {
    let result = [];
    try {
-      const response = await apiConnector("GET", `${doubtPoints.GET_ALL_DOUBT_API}?page=${page}&limit=${limit}`);
+      const response = await apiConnector("GET", `${doubtPoints.GET_ALL_DOUBT_API}?page=${page}&limit=${limit}&search=${search}`);
 
       if (!response?.data?.success)
          throw new Error("Unable to fetch the doubts");

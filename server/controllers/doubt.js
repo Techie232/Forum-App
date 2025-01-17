@@ -34,18 +34,26 @@ exports.createDoubt = async (req, res) => {
 exports.listDoubts = async (req, res) => {
    try {
 
-      let { page, limit } = req.query;
+      let { page, limit, search } = req.query;
 
+      // Set default values
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 7;
 
+      // If search is defined and not empty, trim it
+      if (search?.length)
+         search = search.trim();
+
+      let searchCriteria = {};
+      if (search)
+         searchCriteria = { title: { $regex: search, $options: 'i' } };
+
       const skip = (page - 1) * limit;
-
-      const data = await Doubt.find({})
+      const data = await Doubt.find(searchCriteria)
          .skip(skip)
-         .limit(limit)
+         .limit(limit);
 
-      const total = await Doubt.countDocuments();
+      const total = await Doubt.countDocuments(searchCriteria);
 
       return res.status(200).json({
          success: true,
@@ -54,14 +62,14 @@ exports.listDoubts = async (req, res) => {
             questions: data,
             totalPages: Math.ceil(total / limit)
          }
-      })
+      });
 
    } catch (error) {
       return res.status(500).json({
          success: false,
          message: "Could not fetch doubts",
          error: error.message,
-      })
+      });
    }
 }
 

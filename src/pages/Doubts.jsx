@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getDoubts } from '../services/operations/doubt';
 
 const Doubts = () => {
@@ -9,23 +9,68 @@ const Doubts = () => {
    const [page, setPage] = useState(1);
    const [totalPages, setTotalPages] = useState(1);
    const [loading, setLoading] = useState(false);
+   const [query, setQuery] = useState("");
+
+   const searchData = async () => {
+      setLoading(true);
+      const response = await getDoubts(page, 7, query);
+      if (response?.questions?.length > 0)
+         setDoubts(response.questions);
+      if (response?.totalPages)
+         setTotalPages(response?.totalPages)
+      setLoading(false);
+   }
+
+   const getData = async () => {
+      setLoading(true);
+      const response = await getDoubts(page);
+      if (response?.questions?.length > 0)
+         setDoubts(response.questions);
+      if (response?.totalPages)
+         setTotalPages(response?.totalPages)
+      setLoading(false);
+   }
 
    useEffect(() => {
       navigate(`/?page=${page}`);
-      setLoading(true);
-      const getData = async () => {
-         const response = await getDoubts(page);
-         if (response?.questions?.length > 0)
-            setDoubts(response.questions);
-         if (response?.totalPages)
-            setTotalPages(response?.totalPages)
-         setLoading(false);
+      if (query.length === 0)
+         getData();
+      else {
+         searchData();
       }
-      getData();
    }, [page])
 
+   const handleEnterSearch = (e) => {
+      if (e.key === 'Enter') {
+         setPage(1);
+         searchData();
+      }
+   }
+
+   const handleClickFind = (e) => {
+      setPage(1);
+      searchData();
+   }
+
    return (
-      <div className='w-[70%] text-center'>
+      <div className='w-[70%] text-center relative'>
+
+         {/* search Bar */}
+         <div className='absolute top-5 right-3 flex gap-x-5'>
+            <input
+               placeholder='Search'
+               className='bg-green-200 p-2 rounded-md'
+               type='text'
+               onChange={(e) => setQuery(e.target.value)}
+               onKeyDown={handleEnterSearch}
+            />
+            <button
+               className='bg-slate-300 px-2 rounded-full'
+               onClick={handleClickFind}
+            >
+               Find
+            </button>
+         </div>
 
          <p className='text-2xl font-semibold underline w-fit bg-green-500 mt-5 rounded-lg p-2 sticky top-0'>Doubts that we got here</p>
          {
